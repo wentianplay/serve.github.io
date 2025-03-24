@@ -1,30 +1,17 @@
+ 
 <!DOCTYPE html>
-<script>
-        document.addEventListener("contextmenu", function(e) {
-            e.preventDefault();
-        });
-
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "F12") {
-                e.preventDefault();
-            }
-        });
-
-        document.addEventListener("copy", function(e) {
-            e.preventDefault();
-        });
-    </script>
-<meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-<link rel="shortcut icon" href="https://WenTianPlay.COM/index/API/assets/icon.ico" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文天玩WenTianPlay | 数据服务官方网站</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="shortcut icon" href="https://wentianplay.com/index/API/assets/icon.ico" type="image/x-icon">
+    <meta name="description" content="文天玩网络科技有限公司官方数据服务中心，提供AI原生二次元UCG平台与游戏数据服务"/>
+    <title>文天玩WenTianPlay | 数据服务中心</title>
     <style>
+        /* 响应式布局优化 */
         body {
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -32,6 +19,7 @@
             background: #1a1a1a;
             font-family: 'Arial', sans-serif;
             overflow: hidden;
+            touch-action: none;
         }
 
         .donut {
@@ -51,6 +39,20 @@
             );
             animation: rotate 2s linear infinite;
             box-shadow: 0 0 50px rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 600px) {
+            .donut {
+                width: 150px;
+                height: 150px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .message {
+                font-size: 0.9em;
+                padding: 0 20px;
+            }
         }
 
         .donut::after {
@@ -84,6 +86,7 @@
             text-align: center;
             line-height: 1.6;
             margin: 15px;
+            user-select: none;
         }
 
         .btn {
@@ -99,6 +102,7 @@
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            user-select: none;
         }
 
         .btn:hover {
@@ -130,9 +134,33 @@
 <body>
     <h1>文天玩WenTianPlay</h1>
     <div class="donut"></div>
-    <p class="message">这是重要的数据服务站点,提供更好服务体验!<br>望各位探险者请高抬贵手!!!</p>
-    <a href="https://www.wentianplay.cn" class="btn">前往文天玩WenTianPlay官网</a>
-<meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/>
+    <p class="message">数据服务中心,提供更好服务体验!<br>望各位探险者请高抬贵手</p>
+    
+    <script>
+        // 增强访问限制
+        document.addEventListener("contextmenu", e => e.preventDefault());
+        document.addEventListener("copy", e => e.preventDefault());
+        document.addEventListener("cut", e => e.preventDefault());
+        document.addEventListener("dragstart", e => e.preventDefault());
+
+        // 禁止开发者工具
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+
+        // 防止iframe嵌入
+        if (window !== top) top.location.href = location.href;
+
+        // 移动端触摸限制
+        document.addEventListener('touchmove', e => {
+            if(e.scale !== 1) e.preventDefault();
+        }, { passive: false });
+    </script>
 </body>
 </html>
  
