@@ -1,126 +1,184 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8"><link rel="shortcut icon" href="https://wentianplay.com/index/API/assets/icon.ico" type="image/x-icon"><meta name="keywords" content="文天玩，文天玩WenTian Play,天彬TianBin,WenTianPlay,文天玩WenTianPlay,WenTian Play,文天玩网络科技有限公司,天彬，天彬星辰，文天星辰，国际战争，文天阁，青云阁，乐言阁，言轩团队，小天工作室，ETB，落丽工作室，小天工作室管理协会，星辰管理协会，文天管理协会，管理协会，天彬"/><meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文天玩WenTianPlay数据服务</title>
+   <link rel="shortcut icon" href="https://wentianplay.com/index/API/assets/icon.ico" type="image/x-icon"><meta name="keywords" content="文天玩，文天玩WenTian Play,天彬TianBin,WenTianPlay,文天玩WenTianPlay,WenTian Play,文天玩网络科技有限公司,天彬，天彬星辰，文天星辰，国际战争，文天阁，青云阁，乐言阁，言轩团队，小天工作室，ETB，落丽工作室，小天工作室管理协会，星辰管理协会，文天管理协会，管理协会，天彬"/><meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/>
     <style>
+        :root {
+            --primary: #2A85FF;
+            --dark: #1A1D1F;
+            --light: #FFFFFF;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui;
         }
 
         body {
-            background: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
+            background: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
         }
 
-        .container {
-            position: relative;
+        .nav {
+            position: fixed;
+            width: 100%;
+            padding: 20px 5%;
+            background: rgba(26, 29, 31, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .hero {
             height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            padding: 0 10%;
+            background: linear-gradient(45deg, #1A1D1F 0%, #2A2F33 100%);
         }
 
-        .scanlines {
-            position: absolute;
+        .hero-content {
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #2A85FF, #00C7FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .services {
+            padding: 100px 10%;
+            background: #232628;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .service-card {
+            background: #2A2F33;
+            padding: 30px;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .contact {
+            padding: 100px 10%;
+            background: #1A1D1F;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        input, textarea {
             width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent 0px,
-                transparent 1px,
-                rgba(255,255,255,0.1) 2px,
-                rgba(255,255,255,0.1) 3px
-            );
-            pointer-events: none;
+            padding: 15px;
+            margin: 10px 0;
+            background: #2A2F33;
+            border: none;
+            color: white;
         }
 
-        .loading-text {
-            font-size: 24px;
-            letter-spacing: 4px;
-            text-align: center;
-            margin: 20px 0;
-            position: relative;
-        }
-
-        .donut {
-            font-size: 80px;
+        button {
+            background: var(--primary);
+            color: white;
+            padding: 15px 40px;
+            border: none;
             cursor: pointer;
-            transition: transform 0.3s;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-            position: relative;
-            z-index: 2;
+            transition: opacity 0.3s;
         }
 
-        .donut:hover {
-            transform: scale(1.2) rotate(15deg);
+        button:hover {
+            opacity: 0.9;
         }
 
-        .pattern {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent 0px,
-                transparent 24px,
-                rgba(255,255,255,0.1) 25px
-            );
-            opacity: 0.5;
-        }
-
-        .marquee {
-            position: absolute;
-            white-space: nowrap;
-            font-size: 20px;
-            color: rgba(255,255,255,0.1);
-            animation: marquee 20s linear infinite;
-        }
-
-        @keyframes marquee {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0%); }
-        }
-
-        .hidden {
-            display: none;
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="pattern"></div>
-        <div class="scanlines"></div>
-        
-        <div class="marquee">WENTIANPLAYWENTIANPLAYWENTIANPLAYWENTIANPLAY</div>
-        <div class="marquee" style="top: 50%">////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</div>
-        
-        <div class="loading-text">LOADING0%</div>
-        <div class="donut" onclick="startLoading()">🍩</div>
-    </div>
+    <nav class="nav">
+        <div class="nav-logo">WenTianPlay</div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>数据驱动未来<br>智能赋能业务</h1>
+            <p>专注于游戏数据分析与AI驱动的智能决策服务</p>
+        </div>
+    </section>
+
+    <section class="services">
+        <h2>核心服务</h2>
+        <div class="service-grid">
+            <div class="service-card">
+                <h3>游戏数据分析</h3>
+                <p>实时玩家行为追踪与深度数据挖掘</p>
+            </div>
+            <div class="service-card">
+                <h3>AI驱动决策</h3>
+                <p>Ai深度学习模型赋能精准决策</p>
+            </div>
+            <div class="service-card">
+                <h3>数据可视化</h3>
+                <p>多维数据看板与智能预警系统</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact">
+        <h2>联系我们</h2>
+        <form>
+            <input type="text" placeholder="姓名" required>
+            <input type="email" placeholder="邮箱" required>
+            <textarea rows="6" placeholder="需求描述" required></textarea>
+            <button type="submit">提交需求</button>
+        </form>
+    </section>
 
     <script>
-        function startLoading() {
-            let progress = 0;
-            const loadingText = document.querySelector('.loading-text');
-            const donut = document.querySelector('.donut');
-            
-            donut.style.pointerEvents = 'none';
-            
-            const interval = setInterval(() => {
-                progress = Math.min(progress + Math.random() * 3, 100);
-                loadingText.textContent = `LOADING${Math.floor(progress)}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    window.location.href = 'https://wentianplay.cn'; 
+        // 滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
                 }
-            }, 100);
-        }
-    </script><div><div class="footer"><div class="foot"><p>版权所有 &copy; 2025 <a href="https://WenTianPlay.CN">文天玩WenTianPlay</a></p><div><script>document.addEventListener("contextmenu", e => e.preventDefault());document.addEventListener("copy", e => e.preventDefault());document.addEventListener("cut", e => e.preventDefault());document.addEventListener("dragstart", e => e.preventDefault());document.addEventListener('keydown', e => {if (e.key === 'F12' ||(e.ctrlKey && e.shiftKey && e.key === 'I') ||(e.ctrlKey && e.shiftKey && e.key === 'J') ||(e.ctrlKey && e.key === 'U')) {e.preventDefault();}});if (window !== top) top.location.href = location.href;document.addEventListener('touchmove', e => {if(e.scale !== 1) e.preventDefault();}, { passive: false });</script></body><script>document.querySelector('.donut').addEventListener('click', function() {window.location.href = 'https://www.wentianplay.cn';});</script><meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/></html>
+            });
+        });
+
+        document.querySelectorAll('.service-card').forEach((el) => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(50px)';
+            observer.observe(el);
+        });
+    </script>
+</body>
+<meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/
+</html>
