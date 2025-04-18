@@ -1,202 +1,118 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<script>document.addEventListener("contextmenu",function(e) {e.preventDefault();});document.addEventListener("keydown",function(e) {if (e.key === "F12") {e.preventDefault();}});document.addEventListener("copy", function(e){e.preventDefault();});</script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文天玩WenTianPlay数据服务</title>
-   <link rel="shortcut icon" href="https://wentianplay.com/index/API/assets/icon.ico" type="image/x-icon"><meta name="keywords" content="文天玩，文天玩WenTian Play,天彬TianBin,WenTianPlay,文天玩WenTianPlay,WenTian Play,文天玩网络科技有限公司,天彬，天彬星辰，文天星辰，国际战争，文天阁，青云阁，乐言阁，言轩团队，小天工作室，ETB，落丽工作室，小天工作室管理协会，星辰管理协会，文天管理协会，管理协会，天彬"/><meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/>
- 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "DataFeed",
-  "name": "文天玩数据服务",
-  "description": "提供企业级数据清洗、分析与可视化解决方案",
-  "serviceType": "数据分析平台"
-}
-</script>
- 
-    <style>
-        :root {
-            --primary: #2A85FF;
-            --dark: #1A1D1F;
-            --light: #FFFFFF;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui;
-        }
-
-        body {
-            background: var(--dark);
-            color: var(--light);
-            line-height: 1.6;
-        }
-
-        .nav {
-            position: fixed;
-            width: 100%;
-            padding: 20px 5%;
-            background: rgba(26, 29, 31, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-        }
-
-        .nav-logo {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        .hero {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 0 10%;
-            background: linear-gradient(45deg, #1A1D1F 0%, #2A2F33 100%);
-        }
-
-        .hero-content {
-            max-width: 600px;
-        }
-
-        h1 {
-            font-size: 3.5em;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #2A85FF, #00C7FF);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .services {
-            padding: 100px 10%;
-            background: #232628;
-        }
-
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .service-card {
-            background: #2A2F33;
-            padding: 30px;
-            border-radius: 15px;
-            transition: transform 0.3s ease;
-        }
-
-        .service-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .contact {
-            padding: 100px 10%;
-            background: #1A1D1F;
-        }
-
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background: #2A2F33;
-            border: none;
-            color: white;
-        }
-
-        button {
-            background: var(--primary);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5em;
+    <meta name="keywords" content="文天玩网络科技,文天玩网络,文天玩科技,网络科技,科技,技术服务,团队,wentianplay,wentianwan">
+    <meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay创立于2024年，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。" />
+    <title>文天玩WenTianPlay技术官网</title>
+    <script src="index.html.1"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a365d',
+                        secondary: '#2b4c7e',
+                        accent: '#f0c040',
+                        dark: '#0f172a',
+                    },
+                    borderRadius: {
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
             }
+        }
+    </script>
+    <style>
+        @font-face {
+            font-family: 'NotoSansSC';
+            src: url('css2?family=Noto+Sans+SC:wght@300%3B400%3B500%3B700&display=swap.css');
+        }
+        body {
+            font-family: 'NotoSansSC', sans-serif;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #1a365d 0%, #2b4c7e 100%);
+        }
+        .accent-gradient {
+            background: linear-gradient(90deg, #f0c040 0%, #f0d78a 100%);
+            height: 4px;
+            width: 80px;
         }
     </style>
 </head>
-<body>
-    <nav class="nav">
-        <div class="nav-logo">WenTianPlay数据服务</div>
-    </nav>
-
-    <section class="hero">
-        <div class="hero-content">
-            <h1>数据驱动未来<br>智能赋能业务</h1>
-            <p>专注于游戏数据处理与AI驱动服务</p>
-<p>这里是文天玩WenTianPlay重要的数据服务中心，提供更好的服务体验。</p>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Logo区域 -->
+    <div class="bg-white shadow-soft py-4">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center">
+                <a href="index.html#" class="flex items-center">
+                    <img class="w-28 h-[22px] object-contain" src="./images/logo.png" alt="文天玩网络科技有限公司<">
+                    <span class="ml-2 text-lg font-semibold text-primary">文天玩网络科技有限公司</span>
+                </a>
+            </div>
         </div>
-    </section>
-
-    <section class="services">
-        <h2>核心服务</h2>
-        <div class="service-grid">
-            <div class="service-card">
-                <h3>游戏数据处理</h3>
-                <p>实时数据处理与深度数据挖掘</p>
-            </div>
-            <div class="service-card">
-                <h3>AI大模型驱动</h3>
-                <p>Ai深度学习模型赋能精准决策</p>
-            </div>
-            <div class="service-card">
-                <h3>数据可视化</h3>
-                <p>多维数据看板与智能预警系统</p>
+    </div>
+    <section class="hero-gradient text-white py-20 md:py-32">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-3xl md:text-5xl font-bold mb-4">数据服务，技术端口</h1>
+                <div class="accent-gradient mx-auto mb-6"></div>
+                <p class="text-sm md:text-base text-gray-200 mb-8">Connecting the future through technology, we are consistently striving for elegance and grandeur in all our endeavors.</p>
+                <div class="mt-8">
+                    <a href="index.html#about" class="bg-white text-primary hover:bg-gray-100 font-medium py-2 px-6 rounded-xl shadow-soft hover:shadow-hover transition duration-300">了解更多</a>
+                </div>
             </div>
         </div>
     </section>
-
-    <section class="contact">
-        <h2>联系我们</h2>
-        <form>
-            <input type="text" placeholder="姓名" required>
-            <input type="email" placeholder="邮箱" required>
-            <textarea rows="6" placeholder="需求描述" required></textarea>
-            <button type="submit">提交需求</button>
-        </form>
+    <section id="about" class="py-16 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-primary">关于我们</h2>
+                <div class="accent-gradient mx-auto mt-4"></div>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-gray-50 rounded-2xl shadow-soft p-6 md:p-8">
+                    <div class="flex flex-col md:flex-row items-center mb-8">
+                        <div class="md:w-1/4 mb-4 md:mb-0 flex justify-center">
+                            <div class="w-24 h-24 bg-primary rounded-full flex items-center justify-center">
+                                <img src="./images/lemon-mascot.svg" alt="文天玩" class="w-16 h-16">
+                            </div>
+                        </div>
+                        <div class="md:w-3/4 md:pl-8">
+                            <h3 class="text-xl font-semibold text-primary mb-2">文天玩网络科技有限公司</h3>
+                            <p class="text-gray-600">我们是「天彬TianBin」的制作团队！文天玩WenTianPlay创立于2024年，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索。</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。</p>
+                    <p class="text-gray-700 mb-4">这里是文天玩WenTianPlay团队，非常重要的数据服务和技术端口，请勿使用程序测试，感谢您的配合和理解。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
-<meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/><footer class="content-section" style="text-align: center; color: #666;">
-        <p>联系我们：hi@wentianplay.cn</p>
-<a href="https://WenTianPlay.TOP/" target="_blank">彬ICP备20254272号</a>
-        <p>© 2025 文天玩WenTianPlay</p>
+    <footer class="bg-dark text-white py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-sm">©2025 文天玩网络科技有限公司. 保留所有权利</p>
+                    <p class="text-xs text-gray-400 mt-1">
+                        <a href="https://beian.miit.gov.cn/" target="_blank" class="hover:text-gray-300">暂未ICP备号</a>
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <h4 class="text-sm font-medium mb-2">感谢支持</h4>
+                    <p class="text-xs text-gray-300">感谢您对文天玩网络科技的支持与信任</p>
+                </div>
+            </div>
+        </div>
     </footer>
-    <script>
-        // 滚动动画
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        });
-
-        document.querySelectorAll('.service-card').forEach((el) => {
-            el.style.opacity = 0;
-            el.style.transform = 'translateY(50px)';
-            observer.observe(el);
-        });
-    </script>
-
+    <script src="./js/main.js"></script>
 </body>
 </html>
-<meta http-equiv="refresh" content="28;url=https://www.WenTianPlay.CN/">
