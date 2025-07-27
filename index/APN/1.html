@@ -1,1 +1,122 @@
-拨号成功
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拨号成功 - 文天玩通信</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .success-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #00cc66;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .success-icon::after {
+            content: "✓";
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        h1 {
+            color: #2d3436;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .message {
+            color: #636e72;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        .countdown {
+            color: #0066cc;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0052a3;
+        }
+        .footer {
+            margin-top: 3rem;
+            color: #8395a7;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <div class="success-icon"></div>
+        <h1>拨号成功</h1>
+        <p class="message">您已成功连接，即将跳转到服务页面<br>若未自动跳转，请点击下方按钮</p>
+        <p class="countdown">将在 <span id="count">6</span> 秒后自动跳转...</p>
+        <button class="btn" onclick="redirectNow()">立即前往</button>
+    </div>
+
+    <div class="footer">
+        文天玩通信 © 2023 | 安全可靠的网络服务
+    </div>
+
+    <script>
+        // 目标跳转链接
+        const targetUrl = "https://www.wentianplay.com";
+        let countdown = 6;
+        const countElement = document.getElementById('count');
+
+        // 倒计时逻辑
+        const timer = setInterval(() => {
+            countdown--;
+            countElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(timer);
+                redirectNow();
+            }
+        }, 1000);
+
+        // 立即跳转函数
+        function redirectNow() {
+            window.location.href = targetUrl;
+        }
+    </script>
+</body>
+</html>
