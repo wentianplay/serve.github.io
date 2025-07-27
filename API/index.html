@@ -3,335 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API拨号 - WenTianPlay</title>
+    <title>WenTianPlay 拨号API</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
         }
         body {
             background: linear-gradient(135deg, #0f766e 0%, #16a34a 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            padding: 2rem 1rem;
+            color: #fff;
             position: relative;
             overflow: hidden;
         }
-        body::before {
-            content: '';
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
-            top: -200px;
-            right: -100px;
-        }
-        body::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
-            bottom: -150px;
-            left: -100px;
-        }
-        .api-card {
-            background: rgba(22, 163, 74, 0.15);
-            backdrop-filter: blur(12px);
-            width: 100%;
-            max-width: 420px;
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            z-index: 10;
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .api-icon {
-            width: 90px;
-            height: 90px;
-            background: linear-gradient(135deg, #10b981, #34d399);
-            border-radius: 50%;
-            margin: 0 auto 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-        }
-        .api-icon::after {
-            content: "→";
-            color: white;
-            font-size: 2.8rem;
-            font-weight: bold;
-        }
-        h1 {
-            color: #f8fafc;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, #e2e8f0, #f8fafc);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .message {
-            color: #d1fae5;
-            font-size: 1.05rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        .numbers {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 1.5rem 0;
-            flex-wrap: wrap;
-            padding: 0 1rem;
-        }
-        .number-chip {
-            background: rgba(22, 101, 52, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #f0fdf4;
-            font-weight: 500;
-            font-size: 1.1rem;
-            animation: popIn 0.5s ease-out forwards;
-            opacity: 0;
-        }
-        @keyframes popIn {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-        .target-url {
-            background: rgba(22, 101, 52, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 0.8rem;
-            margin-bottom: 2rem;
-            font-size: 1rem;
-            color: #a7f3d0;
-            word-break: break-all;
-        }
-        .countdown {
-            color: #10b981;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            font-size: 1.05rem;
-        }
-        #count {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: rgba(16, 185, 129, 0.2);
-            border-radius: 50%;
-            margin: 0 5px;
-            line-height: 30px;
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-        .btn {
-            background: linear-gradient(90deg, #10b981, #34d399);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.9rem 1.8rem;
-            font-size: 1.05rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-        .btn:hover {
-            background: linear-gradient(90deg, #059669, #10b981);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-        }
-        .btn:active {
-            transform: translateY(0);
-        }
-        .footer {
-            margin-top: 3rem;
-            color: #a7f3d0;
-            font-size: 0.9rem;
-            position: relative;
-            z-index: 10;
-        }
-        .connection-animation {
+        .background-dots {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 5;
+            z-index: 0;
             pointer-events: none;
         }
-        .connection-dot {
+        .dot {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(16, 185, 129, 0.6);
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            opacity: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            color: #d1fae5;
+            font-size: 0.95rem;
+        }
+        .dialer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .display {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            font-weight: 300;
+            overflow-x: auto;
+            white-space: nowrap;
+            position: relative;
+        }
+        .display::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 60%;
+            background: #fff;
+            right: 1.5rem;
+            animation: blink 1.2s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .key {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .key span {
+            font-size: 0.7rem;
+            position: absolute;
+            bottom: 8px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .key:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .key:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.95);
+        }
+        .key.dial {
+            background: #10b981;
+            color: #fff;
+            grid-column: 2;
+        }
+        .key.dial:hover {
+            background: #059669;
+        }
+        .key.delete {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .status {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #d1fae5;
+            font-size: 0.9rem;
+            height: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+        @media (max-width: 360px) {
+            .key {
+                font-size: 1.2rem;
+            }
+            .display {
+                font-size: 1.5rem;
+                height: 60px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="connection-animation" id="connectionAnimation"></div>
-    
-    <div class="api-card">
-        <div class="api-icon"></div>
-        <h1>API跳转中</h1>
-        <p class="message">检测到数字序列<br>正在验证目标地址...</p>
-        
-        <!-- 数字序列展示区 -->
-        <div class="numbers" id="numbersContainer"></div>
-        
-        <div class="target-url" id="targetUrl">加载目标地址中...</div>
-        <p class="countdown">将在 <span id="count">6</span> 秒后自动跳转...</p>
-        <button class="btn" onclick="redirectNow()">立即前往</button>
-    </div>
-
-    <div class="footer">
-        WenTianPlay © 2024 | 安全可靠的API服务
+    <div class="background-dots" id="backgroundDots"></div>
+    <div class="container">
+        <div class="header">
+            <h1>WenTianPlay 拨号API</h1>
+            <p>输入号码后点击拨号进行跳转</p>
+        </div>
+        <div class="dialer">
+            <div class="display" id="display">0</div>
+            <div class="status" id="status"></div>
+            <div class="keypad">
+                <button class="key" onclick="pressKey('1')">1<span>QZ</span></button>
+                <button class="key" onclick="pressKey('2')">2<span>ABC</span></button>
+                <button class="key" onclick="pressKey('3')">3<span>DEF</span></button>
+                <button class="key" onclick="pressKey('4')">4<span>GHI</span></button>
+                <button class="key" onclick="pressKey('5')">5<span>JKL</span></button>
+                <button class="key" onclick="pressKey('6')">6<span>MNO</span></button>
+                <button class="key" onclick="pressKey('7')">7<span>PQRS</span></button>
+                <button class="key" onclick="pressKey('8')">8<span>TUV</span></button>
+                <button class="key" onclick="pressKey('9')">9<span>WXYZ</span></button>
+                <button class="key" onclick="pressKey('*')">*</button>
+                <button class="key" onclick="pressKey('0')">0<span>+</span></button>
+                <button class="key delete" onclick="deleteKey()">⌫</button>
+                <button class="key dial" onclick="dial()">拨号</button>
+            </div>
+        </div>
+        <div class="footer">
+            © 2024 WenTianPlay | API Dialer v1.0
+        </div>
     </div>
 
     <script>
-        // 从URL参数获取目标数字
-        function getTargetNumber() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('num') || '0'; // 默认值为0
-        }
-
-        // 构建目标URL (./数字.html)
-        const targetNumber = getTargetNumber();
-        const targetUrl = `./${targetNumber}.html`;
+        let currentNumber = '0';
+        const display = document.getElementById('display');
+        const status = document.getElementById('status');
         
-        // 更新页面显示的目标URL
-        document.getElementById('targetUrl').textContent = targetUrl;
-
-        // 显示1234567890数字序列
-        function displayNumbers() {
-            const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-            const container = document.getElementById('numbersContainer');
-            
-            numbers.forEach((num, index) => {
-                const chip = document.createElement('div');
-                chip.className = 'number-chip';
-                chip.textContent = num;
-                // 错开动画时间，营造依次出现的效果
-                chip.style.animationDelay = `${index * 0.1}s`;
-                container.appendChild(chip);
-            });
-        }
-
-        let countdown = 6;
-        const countElement = document.getElementById('count');
-
-        // 创建连接动画效果
-        function createConnectionDots() {
-            const container = document.getElementById('connectionAnimation');
-            const dotCount = 30;
+        // 生成背景点阵
+        function createDots() {
+            const container = document.getElementById('backgroundDots');
+            const dotCount = 100;
             
             for (let i = 0; i < dotCount; i++) {
                 const dot = document.createElement('div');
-                dot.className = 'connection-dot';
-                
-                // 随机位置和动画
-                const size = Math.random() * 3 + 1;
-                dot.style.width = `${size}px`;
-                dot.style.height = `${size}px`;
+                dot.className = 'dot';
                 dot.style.left = `${Math.random() * 100}%`;
                 dot.style.top = `${Math.random() * 100}%`;
-                
-                const delay = Math.random() * 5;
-                const duration = Math.random() * 8 + 5;
-                
-                dot.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                dot.style.animationDelay = `${Math.random() * 5}s`;
                 container.appendChild(dot);
             }
         }
-
-        // 添加浮动动画样式
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float {
-                0% {
-                    transform: translateY(0) translateX(0);
-                    opacity: 0;
-                }
-                20% {
-                    opacity: 0.8;
-                }
-                80% {
-                    opacity: 0.8;
-                }
-                100% {
-                    transform: translateY(-100px) translateX(50px);
-                    opacity: 0;
+        
+        // 按键处理
+        function pressKey(value) {
+            status.textContent = '';
+            if (currentNumber === '0') {
+                currentNumber = value;
+            } else {
+                // 限制最大输入长度为15位
+                if (currentNumber.length < 15) {
+                    currentNumber += value;
                 }
             }
-        `;
-        document.head.appendChild(style);
-
-        // 倒计时逻辑
-        const timer = setInterval(() => {
-            countdown--;
-            countElement.textContent = countdown;
-
-            if (countdown <= 0) {
-                clearInterval(timer);
-                redirectNow();
-            }
-        }, 1000);
-
-        // 立即跳转函数
-        function redirectNow() {
-            window.location.href = targetUrl;
+            updateDisplay();
         }
-
-        // 页面加载完成后执行
-        window.onload = () => {
-            displayNumbers();
-            createConnectionDots();
-        };
+        
+        // 删除键
+        function deleteKey() {
+            status.textContent = '';
+            if (currentNumber.length > 1) {
+                currentNumber = currentNumber.slice(0, -1);
+            } else {
+                currentNumber = '0';
+            }
+            updateDisplay();
+        }
+        
+        // 更新显示屏
+        function updateDisplay() {
+            display.textContent = currentNumber;
+        }
+        
+        // 拨号功能 - 跳转到对应API页面
+        function dial() {
+            // 过滤掉非数字字符
+            const number = currentNumber.replace(/[^0-9]/g, '');
+            
+            if (number.length < 1) {
+                status.textContent = '请输入有效号码';
+                return;
+            }
+            
+            status.textContent = `正在连接到 ${number}...`;
+            
+            // 模拟连接延迟
+            setTimeout(() => {
+                // 跳转到 ./数字.html
+                window.location.href = `./${number}.html`;
+            }, 1200);
+        }
+        
+        // 页面加载完成后创建点阵背景
+        window.onload = createDots;
     </script>
 </body>
 </html>
