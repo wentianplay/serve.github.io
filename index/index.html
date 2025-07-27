@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文天玩通信 - 专业网络服务</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+        .header {
+            background-color: #0066cc;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .container {
+            max-width: 500px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+        .dialer-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .display {
+            background-color: #f0f4f8;
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 1rem;
+            font-size: 1.5rem;
+            font-weight: 500;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+        .key {
+            background-color: #f0f4f8;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 0 auto;
+            transition: all 0.2s;
+        }
+        .key:hover {
+            background-color: #e0e7ed;
+        }
+        .key.dial {
+            background-color: #00cc66;
+            color: white;
+        }
+        .key.dial:hover {
+            background-color: #00b359;
+        }
+        .key.delete {
+            background-color: #ff6666;
+            color: white;
+        }
+        .key.delete:hover {
+            background-color: #e65c5c;
+        }
+        .message {
+            margin-top: 1.5rem;
+            text-align: center;
+            height: 24px;
+            color: #ff3333;
+            font-size: 0.9rem;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 5rem;
+            color: #666;
+            font-size: 0.9rem;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>文天玩通信 - 拨号器</h1>
+    </div>
+
+    <div class="container">
+        <div class="dialer-card">
+            <div class="display" id="display">0</div>
+            <div class="message" id="message"></div>
+            
+            <div class="keypad">
+                <button class="key" onclick="addNumber('1')">1</button>
+                <button class="key" onclick="addNumber('2')">2</button>
+                <button class="key" onclick="addNumber('3')">3</button>
+                <button class="key" onclick="addNumber('4')">4</button>
+                <button class="key" onclick="addNumber('5')">5</button>
+                <button class="key" onclick="addNumber('6')">6</button>
+                <button class="key" onclick="addNumber('7')">7</button>
+                <button class="key" onclick="addNumber('8')">8</button>
+                <button class="key" onclick="addNumber('9')">9</button>
+                <button class="key" onclick="clearDisplay()">C</button>
+                <button class="key" onclick="addNumber('0')">0</button>
+                <button class="key delete" onclick="deleteNumber()"><</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="key dial" style="width: 80px; height: 80px; font-size: 1.5rem;" onclick="dialNumber()">
+                    拨打
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>文天玩通信 © 2023 | 专注于提供高质量网络接入服务</p>
+    </div>
+
+    <script>
+        let displayValue = '0';
+        const display = document.getElementById('display');
+        const message = document.getElementById('message');
+
+        // 添加数字到显示屏
+        function addNumber(num) {
+            message.textContent = ''; // 清除提示信息
+            if (displayValue === '0') {
+                displayValue = num;
+            } else {
+                displayValue += num;
+            }
+            updateDisplay();
+        }
+
+        // 清除显示屏
+        function clearDisplay() {
+            message.textContent = '';
+            displayValue = '0';
+            updateDisplay();
+        }
+
+        // 删除最后一位数字
+        function deleteNumber() {
+            message.textContent = '';
+            if (displayValue.length > 1) {
+                displayValue = displayValue.slice(0, -1);
+            } else {
+                displayValue = '0';
+            }
+            updateDisplay();
+        }
+
+        // 更新显示屏内容
+        function updateDisplay() {
+            display.textContent = displayValue;
+        }
+
+        // 拨号功能 - 跳转至对应APN页面
+        function dialNumber() {
+            // 验证输入是否为纯数字
+            if (!/^\d+$/.test(displayValue)) {
+                message.textContent = '请输入有效的数字';
+                return;
+            }
+
+            // 构建目标URL
+            const targetUrl = `./APN/${displayValue}.html`;
+            
+            // 尝试跳转（实际项目中需后端配合验证页面是否存在）
+            // 这里通过模拟延迟来模拟页面检查过程
+            message.textContent = '正在连接...';
+            
+            setTimeout(() => {
+                // 实际应用中，需通过AJAX请求验证页面是否存在
+                // 此处仅为前端模拟逻辑
+                window.location.href = targetUrl;
+                
+                // 若页面不存在，浏览器会自动显示404，此处补充提示
+                setTimeout(() => {
+                    message.textContent = '无法拨打：该号码对应的配置不存在';
+                }, 1000);
+            }, 800);
+        }
+    </script>
+</body>
+</html>
