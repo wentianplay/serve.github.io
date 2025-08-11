@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+ <script>
+        document.addEventListener("contextmenu", function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "F12") {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener("copy", function(e) {
+            e.preventDefault();
+        });
+    </script><meta name="description" content="我们是「天彬TianBin」的制作团队！文天玩WenTianPlay(文天玩网络科技有限公司)建立于2017年3月12日，创立于2024年5月3日……，我们是一个年轻有活力的团队，致力于二次元ACG文化在各个领域的探索，2024年我们开始着手于AIGC与二次元文化的深度结合，推出WenTianPlay AI原生二次元UCG平台与天彬TianBin二次元游戏等产品。"/>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拨号成功 - 文天玩WenTianPlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -100px;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            bottom: -150px;
+            left: -100px;
+        }
+        .success-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 10;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+        .success-icon::after {
+            content: "✓";
+            color: white;
+            font-size: 2.8rem;
+            font-weight: bold;
+        }
+        h1 {
+            color: #f8fafc;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #e2e8f0, #f8fafc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .message {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .countdown {
+            color: #3b82f6;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+        #count {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 50%;
+            margin: 0 5px;
+            line-height: 30px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .btn {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.9rem 1.8rem;
+            font-size: 1.05rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        .btn:hover {
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .footer {
+            margin-top: 3rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 10;
+        }
+        .connection-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .connection-dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(16, 185, 129, 0.6);
+            border-radius: 50%;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-animation" id="connectionAnimation"></div>
+
+    <div class="success-card">
+        <div class="success-icon"></div>
+        <h1>拨号成功</h1>
+        <p class="message">您已成功连接，即将跳转到服务页面<br>若未自动跳转，请点击下方按钮</p>
+        <p class="countdown">将在 <span id="count">6</span> 秒后自动跳转...</p>
+        <button class="btn" onclick="redirectNow()">立即前往</button>
+    </div>
+
+    <div class="footer">
+        文天玩WenTianPlay © 2024 | 网络科技服务
+    </div>
+
+    <script>
+        // 目标跳转链接
+        const targetUrl = "https://m.qidian.com/book/1041003789/";
+        let countdown = 6;
+        const countElement = document.getElementById('count');
+
+        // 创建连接动画效果
+        function createConnectionDots() {
+            const container = document.getElementById('connectionAnimation');
+            const dotCount = 30;
+
+            for (let i = 0; i < dotCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'connection-dot';
+
+                // 随机位置和动画
+                const size = Math.random() * 3 + 1;
+                dot.style.width = `${size}px`;
+                dot.style.height = `${size}px`;
+                dot.style.left = `${Math.random() * 100}%`;
+                dot.style.top = `${Math.random() * 100}%`;
+
+                const delay = Math.random() * 5;
+                const duration = Math.random() * 8 + 5;
+
+                dot.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                container.appendChild(dot);
+            }
+        }
+
+        // 添加浮动动画样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0% {
+                    transform: translateY(0) translateX(0);
+                    opacity: 0;
+                }
+                20% {
+                    opacity: 0.8;
+                }
+                80% {
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translateY(-100px) translateX(50px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 倒计时逻辑
+        const timer = setInterval(() => {
+            countdown--;
+            countElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(timer);
+                redirectNow();
+            }
+        }, 1000);
+
+        // 立即跳转函数
+        function redirectNow() {
+            window.location.href = targetUrl;
+        }
+
+        // 页面加载完成后创建连接动画
+        window.onload = createConnectionDots;
+    </script>
+</body>
+</html>
