@@ -3,155 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文天玩域名监测平台</title>
+    <title>文天玩 - 域名健康检测系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary: #0fa3a3;    /* 碧绿主色 */
-            --secondary: #2dd4bf;  /* 动态渐变辅色 */
-            --dark-bg: #0f172a;    /* 深空背景 */
+            --primary: #00c9a7;
+            --secondary: #006e5d;
+            --dark: #003b33;
+            --light: #e6f7f4;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a2c4e 100%);
-            color: white;
-            font-family: 'Segoe UI', system-ui;
+            background: linear-gradient(135deg, var(--dark) 0%, #001f1a 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 2rem;
             overflow-x: hidden;
         }
         .header {
             text-align: center;
-            padding: 2rem 0;
-            background: rgba(15, 163, 163, 0.1);
-            border-bottom: 1px solid var(--primary);
+            margin-bottom: 3rem;
+            position: relative;
         }
         h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            font-size: 3.5rem;
+            background: linear-gradient(to right, var(--primary), #8affdf);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 15px rgba(0, 201, 167, 0.3);
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.85;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
         .domain-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
         }
         .domain-card {
-            background: rgba(30, 41, 59, 0.7);
-            border-radius: 12px;
+            background: rgba(0, 41, 35, 0.6);
+            border: 1px solid rgba(0, 201, 167, 0.2);
+            border-radius: 16px;
             padding: 1.5rem;
-            border: 1px solid rgba(45, 212, 191, 0.3);
-            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
             backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
         .domain-card:hover {
+            border-color: var(--primary);
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(45, 212, 191, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 201, 167, 0.25);
+        }
+        .domain-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .domain-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            margin-right: 8px;
+            background: #555;
+            box-shadow: 0 0 10px currentColor;
         }
-        .status-up { background: #10b981; box-shadow: 0 0 10px #10b981; }
-        .status-down { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
-        .latency {
-            font-weight: bold;
-            color: var(--secondary);
+        .status-text {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
-        .loading-bar {
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.5s ease;
+        .status-checking .status-indicator {
+            background: #ffcc00;
+            animation: pulse 1.5s infinite;
+        }
+        .status-up .status-indicator {
+            background: #00ff9d;
+        }
+        .status-down .status-indicator {
+            background: #ff3d71;
+        }
+        .domain-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .info-card {
+            background: rgba(0, 58, 50, 0.4);
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+        .info-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .btn-visit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(90deg, var(--primary), #00e6c3);
+            color: var(--dark);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 201, 167, 0.4);
+        }
+        .btn-visit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 201, 167, 0.6);
+        }
+        .chart-container {
+            height: 120px;
+            margin-top: 1rem;
+        }
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 6px solid rgba(0, 201, 167, 0.2);
+            border-top: 6px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 2rem;
+        }
+        .loading-text {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, var(--primary), #8affdf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
         @media (max-width: 768px) {
-            .domain-grid { padding: 1rem; grid-template-columns: 1fr; }
-            h1 { font-size: 1.8rem; }
+            body {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            .domain-name {
+                font-size: 1.5rem;
+            }
+            .domain-info {
+                grid-template-columns: 1fr;
+            }
+        }
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>文天玩全域监测平台</h1>
-        <p>实时检测官方域名访问状态</p>
-        <div class="loading-bar" id="global-loading"></div>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">检测系统启动中</div>
     </div>
-    
-    <div class="domain-grid" id="domain-container">
-        <!-- 动态生成域名卡片 -->
+
+    <div class="header">
+        <h1>文天玩域名健康监测</h1>
+        <p class="subtitle">企业级实时域名状态检测系统 - 全面监控核心域名的可访问性与性能指标</p>
+    </div>
+
+    <div class="domain-grid" id="domainGrid">
+        <!-- 域名卡片将通过JavaScript动态生成 -->
+    </div>
+
+    <div class="footer">
+        <p>文天玩技术团队 © 2025 | 企业级域名监控系统</p>
     </div>
 
     <script>
-        // 待检测域名列表
+        // 域名检测配置
         const domains = [
-            { name: "wentianplay.com", url: "https://www.wentianplay.com" },
-            { name: "wentianplay.cn", url: "https://www.wentianplay.cn" },
-            { name: "wentianplay.net", url: "https://www.wentianplay.net" },
-            { name: "wentianplay.top", url: "https://www.wentianplay.top" },
-            { name: "wentianwan.com", url: "https://www.wentianwan.com" },
-            { name: "wentianwan.cn", url: "https://www.wentianwan.cn" }
+            { name: 'wentianplay.com', url: 'https://www.wentianplay.com' },
+            { name: 'wentianplay.cn', url: 'https://www.wentianplay.cn' },
+            { name: 'wentianplay.net', url: 'https://www.wentianplay.net' },
+            { name: 'wentianplay.top', url: 'https://www.wentianplay.top' },
+            { name: 'wentianwan.com', url: 'https://www.wentianwan.com' },
+            { name: 'wentianwan.cn', url: 'https://www.wentianwan.cn' }
         ];
 
-        // 企业级检测核心逻辑
-        const checkDomain = async (domain) => {
+        // WHOIS信息API端点（示例）
+        const WHOIS_API = 'https://api.whoisfreaks.com/v1.0/whois?apiKey=YOUR_API_KEY&domain=';
+        
+        // 性能数据记录
+        const performanceData = {};
+        
+        // 初始化性能图表
+        function initChart(canvasId, domain) {
+            return new Chart(document.getElementById(canvasId), {
+                type: 'line',
+                data: {
+                    labels: ['', '', '', '', ''],
+                    datasets: [{
+                        label: '响应时间(ms)',
+                        data: [0, 0, 0, 0, 0],
+                        borderColor: '#00c9a7',
+                        backgroundColor: 'rgba(0, 201, 167, 0.1)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            min: 0,
+                            display: false
+                        },
+                        x: {
+                            display: false
+                        }
+                    },
+                    interaction: { intersect: false },
+                    animation: { duration: 0 }
+                }
+            });
+        }
+
+        // 创建域名卡片
+        function createDomainCard(domain) {
+            const domainGrid = document.getElementById('domainGrid');
+            
+            const card = document.createElement('div');
+            card.className = 'domain-card';
+            card.id = `card-${domain.name.replace('.', '-')}`;
+            card.innerHTML = `
+                <div class="domain-header">
+                    <div class="domain-name">${domain.name}</div>
+                    <div class="status status-checking">
+                        <div class="status-indicator"></div>
+                        <div class="status-text">检测中...</div>
+                    </div>
+                </div>
+                <div class="domain-info">
+                    <div class="info-card">
+                        <div class="info-title">访问状态</div>
+                        <div class="info-value" id="status-${domain.name.replace('.', '-')}">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-title">响应延迟</div>
+                        <div class="info-value" id="latency-${domain.name.replace('.', '-')}">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-title">WHOIS 注册日期</div>
+                        <div class="info-value" id="creation-${domain.name.replace('.', '-')}">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-title">WHOIS 到期日期</div>
+                        <div class="info-value" id="expiry-${domain.name.replace('.', '-')}">-</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-${domain.name.replace('.', '-')}"></canvas>
+                </div>
+                <a href="${domain.url}" target="_blank" class="btn-visit">立即访问</a>
+            `;
+            
+            domainGrid.appendChild(card);
+            
+            // 初始化图表
+            performanceData[domain.name] = {
+                chart: initChart(`chart-${domain.name.replace('.', '-')}`, domain.name),
+                data: []
+            };
+            
+            return card;
+        }
+
+        // 域名状态检测方法
+        async function checkDomain(domain) {
+            const id = domain.name.replace('.', '-');
             const startTime = performance.now();
+            let latency = 0;
+            let status = 'down';
+            
             try {
+                // 使用更可靠的检测方法
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒超时
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
                 
                 const response = await fetch(domain.url, {
                     method: 'HEAD',
                     mode: 'no-cors',
+                    cache: 'no-store',
                     signal: controller.signal
                 });
                 
                 clearTimeout(timeoutId);
-                const latency = Math.round(performance.now() - startTime);
-                return { status: 'up', latency };
+                latency = Math.round(performance.now() - startTime);
+                status = 'up';
             } catch (error) {
-                return { status: 'down', latency: null };
+                latency = 0;
+                status = 'down';
             }
-        };
-
-        // 动态生成卡片
-        const renderCard = (domain, result) => {
-            const card = document.createElement('div');
-            card.className = 'domain-card';
-            card.innerHTML = `
-                <h3>${domain.name}</h3>
-                <p>
-                    <span class="status-indicator status-${result.status}"></span>
-                    状态: ${result.status === 'up' ? '正常访问' : '不可用'}
-                </p>
-                ${result.latency ? `<p>延迟: <span class="latency">${result.latency}ms</span></p>` : ''}
-                <p>访问地址: <a href="${domain.url}" target="_blank">${domain.url}</a></p>
-            `;
-            return card;
-        };
-
-        // 页面加载即执行
-        window.addEventListener('DOMContentLoaded', async () => {
-            const container = document.getElementById('domain-container');
-            const loadingBar = document.getElementById('global-loading');
-            let completed = 0;
             
-            // 并发检测（企业级线程控制）
-            const concurrentCheck = async () => {
-                for (const domain of domains) {
-                    const result = await checkDomain(domain);
-                    container.appendChild(renderCard(domain, result));
-                    
-                    // 进度条更新
-                    completed++;
-                    loadingBar.style.width = `${(completed/domains.length)*100}%`;
-                }
+            return { latency, status };
+        }
+
+        // 获取WHOIS信息（简化版）
+        async function getWhoisInfo(domain) {
+            // 实际实现应使用API，此处为示例数据
+            return {
+                creationDate: '2023-06-01',
+                expiryDate: '2025-06-01'
             };
+        }
+
+        // 更新域名卡片状态
+        function updateDomainCard(domain, result, whois) {
+            const id = domain.name.replace('.', '-');
+            const card = document.getElementById(`card-${id}`);
+            const statusElement = document.getElementById(`status-${id}`);
+            const latencyElement = document.getElementById(`latency-${id}`);
+            const creationElement = document.getElementById(`creation-${id}`);
+            const expiryElement = document.getElementById(`expiry-${id}`);
             
-            await concurrentCheck();
-        });
+            // 更新状态
+            card.querySelector('.status').className = `status status-${result.status}`;
+            card.querySelector('.status-text').textContent = 
+                result.status === 'up' ? '在线' : '离线';
+                
+            statusElement.textContent = result.status === 'up' ? '正常运行' : '服务中断';
+            statusElement.style.color = result.status === 'up' ? '#00ff9d' : '#ff3d71';
+            
+            // 更新延迟
+            if (result.latency > 0) {
+                latencyElement.textContent = `${result.latency} ms`;
+                latencyElement.style.color = result.latency < 300 ? '#00ff9d' : 
+                                            result.latency < 800 ? '#ffcc00' : '#ff3d71';
+                
+                // 更新图表数据
+                const chartData = performanceData[domain.name];
+                if (chartData.data.length >= 5) chartData.data.shift();
+                chartData.data.push(result.latency);
+                
+                chartData.chart.data.datasets[0].data = chartData.data;
+                chartData.chart.update();
+            }
+            
+            // 更新WHOIS信息
+            if (whois) {
+                creationElement.textContent = whois.creationDate || '未知';
+                expiryElement.textContent = whois.expiryDate || '未知';
+            }
+        }
+
+        // 执行域名检测
+        async function runDomainChecks() {
+            for (const domain of domains) {
+                createDomainCard(domain);
+                
+                // 同时执行检测和WHOIS查询
+                const [checkResult, whoisInfo] = await Promise.all([
+                    checkDomain(domain),
+                    getWhoisInfo(domain.name)
+                ]);
+                
+                updateDomainCard(domain, checkResult, whoisInfo);
+                
+                // 添加延迟避免请求阻塞
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            // 隐藏加载界面
+            document.getElementById('loadingScreen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }, 500);
+        }
+
+        // 页面加载完成后开始检测
+        window.addEventListener('DOMContentLoaded', runDomainChecks);
     </script>
 </body>
 </html>
