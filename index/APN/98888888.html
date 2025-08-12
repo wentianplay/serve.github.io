@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文天玩域名实时监控</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --secondary: #1abc9c;
+            --dark: #0f4c3a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a2e1d 0%, #0a1929 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        #domain-input {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: 2px solid var(--primary);
+            background: var(--glass);
+            color: white;
+            width: 300px;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .domain {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status i {
+            font-size: 1.5rem;
+        }
+        
+        .online {
+            color: var(--primary);
+        }
+        
+        .offline {
+            color: #e74c3c;
+        }
+        
+        .checking {
+            color: #f39c12;
+        }
+        
+        .latency {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .last-checked::before {
+            content: "🕒 ";
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            #domain-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <header>
+            <h1>文天玩域名实时监控</h1>
+            <p class="subtitle">页面加载时自动检测所有域名状态 · 实时更新</p>
+        </header>
+        
+        <div class="controls">
+            <input type="text" id="domain-input" placeholder="输入要检测的域名（如：example.com）">
+            <button id="check-single"><i class="fas fa-search"></i> 检测域名</button>
+            <button id="check-all"><i class="fas fa-sync-alt"></i> 全部检测</button>
+        </div>
+        
+        <div class="grid" id="results">
+            <!-- 域名卡片将通过JavaScript动态生成 -->
+        </div>
+    </div>
+    
+    <footer>
+        <p>毕业设计作品 | 文天玩技术团队 © 2025</p>
+    </footer>
+
+    <script>
+        // 初始化粒子背景
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 } },
+                color: { value: "#2ecc71" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#1abc9c",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "grab" },
+                    onclick: { enable: true, mode: "push" }
+                }
+            }
+        });
+
+        // 预定义检测域名列表
+        const domains = [
+            { name: "wentianplay.com", url: "https://www.wentianplay.com" },
+            { name: "wentianplay.cn", url: "https://www.wentianplay.cn" },
+            { name: "wentianplay.net", url: "https://www.wentianplay.net" },
+            { name: "wentianplay.top", url: "https://www.wentianplay.top" },
+            { name: "wentianwan.com", url: "https://www.wentianwan.com" },
+            { name: "wentianwan.cn", url: "https://www.wentianwan.cn" }
+        ];
+
+        // 域名检测函数
+        async function checkDomain(domain) {
+            const startTime = performance.now();
+            let status = "checking";
+            let latency = 0;
+            
+            try {
+                // 先尝试HEAD请求（更快）
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                
+                const response = await fetch(domain.url, { 
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    cache: 'no-store',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                status = "online";
+                latency = performance.now() - startTime;
+            } catch (error) {
+                // HEAD失败后尝试完整请求
+                try {
+                    const fallbackStart = performance.now();
+                    const fallbackController = new AbortController();
+                    const fallbackTimeout = setTimeout(() => fallbackController.abort(), 5000);
+                    
+                    await fetch(domain.url, {
+                        mode: 'no-cors',
+                        signal: fallbackController.signal
+                    });
+                    
+                    clearTimeout(fallbackTimeout);
+                    status = "online";
+                    latency = performance.now() - fallbackStart;
+                } catch (e) {
+                    status = "offline";
+                }
+            }
+            
+            return {
+                ...domain,
+                status,
+                latency: status === "online" ? latency : 0,
+                lastChecked: new Date().toLocaleTimeString()
+            };
+        }
+
+        // 渲染域名卡片
+        function renderDomainCard(domainData) {
+            let statusIcon, statusText, latencyInfo;
+            
+            if (domainData.status === 'online') {
+                statusIcon = '<i class="fas fa-check-circle online"></i>';
+                statusText = '正常访问';
+                latencyInfo = `<div class="latency">延迟: <b>${domainData.latency.toFixed(2)} ms</b></div>`;
+            } else if (domainData.status === 'offline') {
+                statusIcon = '<i class="fas fa-times-circle offline"></i>';
+                statusText = '无法访问';
+                latencyInfo = '<div class="latency">域名不可达</div>';
+            } else {
+                statusIcon = '<i class="fas fa-sync-alt spinner checking"></i>';
+                statusText = '检测中...';
+                latencyInfo = '<div class="latency">正在测试网络</div>';
+            }
+            
+            return `
+                <div class="card" data-domain="${domainData.name}">
+                    <div class="domain">
+                        <span>${domainData.name}</span>
+                        <a href="${domainData.url}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="status">
+                        ${statusIcon}
+                        <span>${statusText}</span>
+                    </div>
+                    ${latencyInfo}
+                    <div class="stats">
+                        <span class="last-checked">${domainData.lastChecked}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 更新单个卡片状态
+        function updateDomainCard(domainData) {
+            const cardElement = document.querySelector(`.card[data-domain="${domainData.name}"]`);
+            if (cardElement) {
+                cardElement.outerHTML = renderDomainCard(domainData);
+            }
+        }
+
+        // 执行批量检测（并行）
+        async function checkAllDomains() {
+            const promises = domains.map(domain => {
+                // 先显示检测中状态
+                updateDomainCard({
+                    ...domain,
+                    status: 'checking',
+                    latency: 0,
+                    lastChecked: '检测中...'
+                });
+                
+                return checkDomain(domain);
+            });
+            
+            const results = await Promise.all(promises);
+            
+            // 更新所有卡片
+            results.forEach(domainData => {
+                updateDomainCard(domainData);
+            });
+        }
+
+        // 检测单个域名
+        async function checkSingleDomain() {
+            const input = document.getElementById('domain-input').value.trim();
+            if (!input) return;
+            
+            const customDomain = {
+                name: input,
+                url: input.startsWith('http') ? input : `https://${input}`
+            };
+            
+            // 先插入检测中状态
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = renderDomainCard({
+                ...customDomain,
+                status: 'checking',
+                latency: 0,
+                lastChecked: '检测中...'
+            }) + resultsContainer.innerHTML;
+            
+            // 检测后更新
+            const domainData = await checkDomain(customDomain);
+            updateDomainCard(domainData);
+        }
+
+        // 事件监听
+        document.getElementById('check-all').addEventListener('click', checkAllDomains);
+        document.getElementById('check-single').addEventListener('click', checkSingleDomain);
+        
+        // 初始化页面 - 自动检测所有域名
+        window.onload = () => {
+            // 初始渲染所有卡片为"检测中"状态
+            const resultsContainer = document.getElementById('results');
+            domains.forEach(domain => {
+                resultsContainer.innerHTML += renderDomainCard({
+                    ...domain,
+                    status: 'checking',
+                    latency: 0,
+                    lastChecked: '即将检测...'
+                });
+            });
+            
+            // 立即开始检测
+            checkAllDomains();
+        };
+    </script>
+</body>
+</html>
