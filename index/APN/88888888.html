@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文天玩域名监测平台</title>
+    <style>
+        :root {
+            --primary: #0fa3a3;    /* 碧绿主色 */
+            --secondary: #2dd4bf;  /* 动态渐变辅色 */
+            --dark-bg: #0f172a;    /* 深空背景 */
+        }
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a2c4e 100%);
+            color: white;
+            font-family: 'Segoe UI', system-ui;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+            background: rgba(15, 163, 163, 0.1);
+            border-bottom: 1px solid var(--primary);
+        }
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+        }
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+        .domain-card {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .domain-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(45, 212, 191, 0.2);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-up { background: #10b981; box-shadow: 0 0 10px #10b981; }
+        .status-down { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .latency {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        .loading-bar {
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        @media (max-width: 768px) {
+            .domain-grid { padding: 1rem; grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>文天玩全域监测平台</h1>
+        <p>实时检测官方域名访问状态</p>
+        <div class="loading-bar" id="global-loading"></div>
+    </div>
+    
+    <div class="domain-grid" id="domain-container">
+        <!-- 动态生成域名卡片 -->
+    </div>
+
+    <script>
+        // 待检测域名列表
+        const domains = [
+            { name: "wentianplay.com", url: "https://www.wentianplay.com" },
+            { name: "wentianplay.cn", url: "https://www.wentianplay.cn" },
+            { name: "wentianplay.net", url: "https://www.wentianplay.net" },
+            { name: "wentianplay.top", url: "https://www.wentianplay.top" },
+            { name: "wentianwan.com", url: "https://www.wentianwan.com" },
+            { name: "wentianwan.cn", url: "https://www.wentianwan.cn" }
+        ];
+
+        // 企业级检测核心逻辑
+        const checkDomain = async (domain) => {
+            const startTime = performance.now();
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒超时
+                
+                const response = await fetch(domain.url, {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                const latency = Math.round(performance.now() - startTime);
+                return { status: 'up', latency };
+            } catch (error) {
+                return { status: 'down', latency: null };
+            }
+        };
+
+        // 动态生成卡片
+        const renderCard = (domain, result) => {
+            const card = document.createElement('div');
+            card.className = 'domain-card';
+            card.innerHTML = `
+                <h3>${domain.name}</h3>
+                <p>
+                    <span class="status-indicator status-${result.status}"></span>
+                    状态: ${result.status === 'up' ? '正常访问' : '不可用'}
+                </p>
+                ${result.latency ? `<p>延迟: <span class="latency">${result.latency}ms</span></p>` : ''}
+                <p>访问地址: <a href="${domain.url}" target="_blank">${domain.url}</a></p>
+            `;
+            return card;
+        };
+
+        // 页面加载即执行
+        window.addEventListener('DOMContentLoaded', async () => {
+            const container = document.getElementById('domain-container');
+            const loadingBar = document.getElementById('global-loading');
+            let completed = 0;
+            
+            // 并发检测（企业级线程控制）
+            const concurrentCheck = async () => {
+                for (const domain of domains) {
+                    const result = await checkDomain(domain);
+                    container.appendChild(renderCard(domain, result));
+                    
+                    // 进度条更新
+                    completed++;
+                    loadingBar.style.width = `${(completed/domains.length)*100}%`;
+                }
+            };
+            
+            await concurrentCheck();
+        });
+    </script>
+</body>
+</html>
