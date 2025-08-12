@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文天玩官方域名检测系统</title>
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --secondary: #27ae60;
+            --dark: #1e824c;
+            --light: #d1f2eb;
+            --error: #e74c3c;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0c3d1e 0%, #1a5d2b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+            overflow-x: hidden;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0, 20, 10, 0.6);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 30, 15, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary);
+        }
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #a8ff78, #78ffd6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(168, 255, 120, 0.3);
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .domains-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .domain-card {
+            background: rgba(10, 40, 25, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .domain-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .domain-card.loading::before {
+            animation: loadingBar 1.5s infinite;
+        }
+        .domain-card.available::before {
+            background: var(--primary);
+            transform: scaleX(1);
+        }
+        .domain-card.unavailable::before {
+            background: var(--error);
+            transform: scaleX(1);
+        }
+        .domain-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+        .domain-link {
+            color: #78ffd6;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            word-break: break-all;
+        }
+        .status {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .status-available {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        .status-unavailable {
+            background: var(--error);
+            box-shadow: 0 0 10px var(--error);
+        }
+        .latency {
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        .latency-value {
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+        .stats-bar {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: rgba(10, 40, 25, 0.7);
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        .stat {
+            text-align: center;
+            min-width: 150px;
+        }
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #a8ff78, #78ffd6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        .last-update {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        @keyframes loadingBar {
+            0% { transform: scaleX(0); transform-origin: left; }
+            50% { transform: scaleX(1); transform-origin: left; }
+            51% { transform-origin: right; }
+            100% { transform: scaleX(0); transform-origin: right; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .domains-container { grid-template-columns: 1fr; }
+            .domain-card { padding: 20px; }
+            .stats-bar { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>文天玩官方域名检测系统</h1>
+        <p class="subtitle">实时监控六大官方域名的访问状态与响应速度</p>
+    </div>
+
+    <div class="domains-container">
+        <!-- 域名卡片由JavaScript动态生成 -->
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-value" id="available-count">0</div>
+            <div class="stat-label">可用域名</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="avg-latency">0ms</div>
+            <div class="stat-label">平均延迟</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="min-latency">0ms</div>
+            <div class="stat-label">最低延迟</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        文天玩网络技术有限公司 &copy; 2025
+        <div class="last-update">最后检测时间: <span id="last-update">--</span></div>
+    </div>
+
+    <script>
+        // 待检测的域名列表
+        const domains = [
+            { name: "wentianplay.com", url: "https://www.wentianplay.com" },
+            { name: "wentianplay.cn", url: "https://www.wentianplay.cn" },
+            { name: "wentianplay.net", url: "https://www.wentianplay.net" },
+            { name: "wentianplay.top", url: "https://www.wentianplay.top" },
+            { name: "wentianwan.com", url: "https://www.wentianwan.com" },
+            { name: "wentianwan.cn", url: "https://www.wentianwan.cn" }
+        ];
+
+        // 初始化DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.querySelector('.domains-container');
+            
+            // 创建域名卡片
+            domains.forEach(domain => {
+                const card = document.createElement('div');
+                card.className = 'domain-card loading';
+                card.id = `domain-${domain.name.replace(/\./g, '-')}`;
+                card.innerHTML = `
+                    <div class="domain-name">${domain.name}</div>
+                    <a href="${domain.url}" class="domain-link" target="_blank">${domain.url}</a>
+                    <div class="status">
+                        <div class="status-indicator"></div>
+                        <span class="status-text">检测中...</span>
+                    </div>
+                    <div class="latency">延迟: <span class="latency-value">--</span></div>
+                `;
+                container.appendChild(card);
+            });
+            
+            // 开始检测所有域名
+            detectAllDomains();
+        });
+
+        // 检测所有域名的访问状态和延迟
+        async function detectAllDomains() {
+            let availableCount = 0;
+            let totalLatency = 0;
+            let minLatency = Infinity;
+            const latencyResults = [];
+            
+            // 同时检测所有域名
+            const testPromises = domains.map(domain => testDomain(domain));
+            
+            // 等待所有检测完成
+            await Promise.allSettled(testPromises);
+            
+            // 计算统计数据
+            domains.forEach(domain => {
+                if (domain.latency >= 0) {
+                    availableCount++;
+                    totalLatency += domain.latency;
+                    latencyResults.push(domain.latency);
+                    if (domain.latency < minLatency) minLatency = domain.latency;
+                }
+            });
+            
+            // 更新统计信息
+            document.getElementById('available-count').textContent = availableCount;
+            document.getElementById('avg-latency').textContent = 
+                availableCount ? Math.round(totalLatency / availableCount) + 'ms' : 'N/A';
+            document.getElementById('min-latency').textContent = 
+                minLatency !== Infinity ? minLatency + 'ms' : 'N/A';
+            document.getElementById('last-update').textContent = new Date().toLocaleString();
+        }
+
+        // 检测单个域名的访问状态和延迟
+        async function testDomain(domain) {
+            const card = document.getElementById(`domain-${domain.name.replace(/\./g, '-')}`);
+            const statusText = card.querySelector('.status-text');
+            const statusIndicator = card.querySelector('.status-indicator');
+            const latencyValue = card.querySelector('.latency-value');
+            
+            try {
+                const startTime = performance.now();
+                
+                // 使用HEAD方法减少数据传输量
+                const response = await fetch(domain.url, {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    cache: 'no-store'
+                });
+                
+                const latency = Math.round(performance.now() - startTime);
+                domain.latency = latency;
+                
+                // 更新UI
+                card.classList.remove('loading');
+                card.classList.add('available');
+                statusText.textContent = '可访问';
+                statusIndicator.classList.add('status-available');
+                latencyValue.textContent = `${latency}ms`;
+                latencyValue.style.color = getLatencyColor(latency);
+            } catch (error) {
+                // 处理访问失败的情况
+                domain.latency = -1;
+                card.classList.remove('loading');
+                card.classList.add('unavailable');
+                statusText.textContent = '不可访问';
+                statusIndicator.classList.add('status-unavailable');
+                latencyValue.textContent = '超时';
+            }
+        }
+
+        // 根据延迟时间获取颜色（绿色到红色的渐变）
+        function getLatencyColor(latency) {
+            if (latency < 100) return '#78ffd6';  // 最佳状态 - 蓝绿色
+            if (latency < 200) return '#a8ff78';  // 良好 - 亮绿色
+            if (latency < 300) return '#ffde7a';  // 一般 - 黄色
+            return '#ff7a7a';  // 较差 - 红色
+        }
+    </script>
+</body>
+</html>
