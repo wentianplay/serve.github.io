@@ -3,450 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文天玩 - 域名健康检测系统</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>文天玩域名健康监测系统</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
     <style>
         :root {
-            --primary: #00c9a7;
-            --secondary: #006e5d;
-            --dark: #003b33;
-            --light: #e6f7f4;
+            --primary: #00c9a7;  /* 碧绿主色 */
+            --secondary: #0b4f40; /* 深绿强调色 */
+            --bg: #f5fffd;       /* 浅绿背景 */
         }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
         body {
-            background: linear-gradient(135deg, var(--dark) 0%, #001f1a 100%);
-            color: var(--light);
+            background: linear-gradient(135deg, var(--bg) 0%, #e0f7fa 100%);
             min-height: 100vh;
-            padding: 2rem;
-            overflow-x: hidden;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .header {
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 201, 167, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(11, 79, 64, 0.1);
+        }
+        header {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
             text-align: center;
-            margin-bottom: 3rem;
+            padding: 25px 20px;
             position: relative;
         }
         h1 {
-            font-size: 3.5rem;
-            background: linear-gradient(to right, var(--primary), #8affdf);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 800;
+            font-size: 2.8rem;
             letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 15px rgba(0, 201, 167, 0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
         }
         .subtitle {
             font-size: 1.2rem;
-            opacity: 0.85;
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
+            opacity: 0.9;
         }
-        .domain-grid {
-            max-width: 1000px;
-            margin: 0 auto;
+        .domain-list {
+            padding: 30px 20px;
         }
-        .domain-card {
-            background: rgba(0, 41, 35, 0.6);
-            border: 1px solid rgba(0, 201, 167, 0.2);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        .domain-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 201, 167, 0.25);
-        }
-        .domain-header {
+        .domain-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
+            padding: 20px 25px;
+            border-bottom: 1px dashed #e0e0e0;
+            transition: all 0.4s ease;
+        }
+        .domain-item:last-child {
+            border-bottom: none;
         }
         .domain-name {
+            flex: 1;
             font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--primary);
-        }
-        .status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .status-indicator {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #555;
-            box-shadow: 0 0 10px currentColor;
-        }
-        .status-text {
             font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9rem;
+            color: var(--secondary);
+            letter-spacing: 1px;
         }
-        .status-checking .status-indicator {
-            background: #ffcc00;
+        .domain-status {
+            width: 120px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .status-success { color: #00c9a7; }
+        .status-warning { color: #ff9800; }
+        .status-error { color: #f44336; }
+        .domain-latency {
+            width: 100px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.3rem;
+        }
+        .domain-action a {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 201, 167, 0.3);
+        }
+        .domain-action a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 201, 167, 0.4);
+        }
+        .pulse {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
             animation: pulse 1.5s infinite;
         }
-        .status-up .status-indicator {
-            background: #00ff9d;
-        }
-        .status-down .status-indicator {
-            background: #ff3d71;
-        }
-        .domain-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .info-card {
-            background: rgba(0, 58, 50, 0.4);
-            border-radius: 12px;
-            padding: 1.2rem;
-        }
-        .info-title {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.7;
-            margin-bottom: 0.5rem;
-        }
-        .info-value {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        .btn-visit {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(90deg, var(--primary), #00e6c3);
-            color: var(--dark);
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-            box-shadow: 0 5px 15px rgba(0, 201, 167, 0.4);
-        }
-        .btn-visit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 201, 167, 0.6);
-        }
-        .chart-container {
-            height: 120px;
-            margin-top: 1rem;
-        }
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--dark);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s;
-        }
-        .loading-spinner {
-            width: 80px;
-            height: 80px;
-            border: 6px solid rgba(0, 201, 167, 0.2);
-            border-top: 6px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1.5s linear infinite;
-            margin-bottom: 2rem;
-        }
-        .loading-text {
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            background: linear-gradient(to right, var(--primary), #8affdf);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 700;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
         @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+            100% { opacity: 0.6; transform: scale(1); }
         }
+        .status-success .pulse { background: #00c9a7; }
+        .status-warning .pulse { background: #ff9800; }
+        .status-error .pulse { background: #f44336; }
+
+        /* 响应式适配 */
         @media (max-width: 768px) {
-            body {
-                padding: 1.5rem;
+            .domain-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
             }
-            h1 {
-                font-size: 2.5rem;
+            .domain-name, .domain-status, 
+            .domain-latency, .domain-action {
+                width: 100%;
             }
-            .domain-name {
-                font-size: 1.5rem;
-            }
-            .domain-info {
-                grid-template-columns: 1fr;
-            }
-        }
-        .footer {
-            text-align: center;
-            margin-top: 4rem;
-            opacity: 0.7;
-            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-spinner"></div>
-        <div class="loading-text">检测系统启动中</div>
-    </div>
-
-    <div class="header">
-        <h1>文天玩域名健康监测</h1>
-        <p class="subtitle">企业级实时域名状态检测系统 - 全面监控核心域名的可访问性与性能指标</p>
-    </div>
-
-    <div class="domain-grid" id="domainGrid">
-        <!-- 域名卡片将通过JavaScript动态生成 -->
-    </div>
-
-    <div class="footer">
-        <p>文天玩技术团队 © 2025 | 企业级域名监控系统</p>
+    <div class="container">
+        <header>
+            <h1>文天玩域名监测平台</h1>
+            <div class="subtitle">实时检测官方域名健康状态</div>
+        </header>
+        
+        <div class="domain-list" id="domainList">
+            <!-- 域名状态动态生成 -->
+        </div>
     </div>
 
     <script>
-        // 域名检测配置
+        // 待检测域名列表
         const domains = [
-            { name: 'wentianplay.com', url: 'https://www.wentianplay.com' },
-            { name: 'wentianplay.cn', url: 'https://www.wentianplay.cn' },
-            { name: 'wentianplay.net', url: 'https://www.wentianplay.net' },
-            { name: 'wentianplay.top', url: 'https://www.wentianplay.top' },
-            { name: 'wentianwan.com', url: 'https://www.wentianwan.com' },
-            { name: 'wentianwan.cn', url: 'https://www.wentianwan.cn' }
+            { name: "wentianplay.com", url: "https://www.wentianplay.com" },
+            { name: "wentianplay.cn", url: "https://www.wentianplay.cn" },
+            { name: "wentianplay.net", url: "https://www.wentianplay.net" },
+            { name: "wentianplay.top", url: "https://www.wentianplay.top" },
+            { name: "wentianwan.com", url: "https://www.wentianwan.com" },
+            { name: "wentianwan.cn", url: "https://www.wentianwan.cn" }
         ];
 
-        // WHOIS信息API端点（示例）
-        const WHOIS_API = 'https://api.whoisfreaks.com/v1.0/whois?apiKey=YOUR_API_KEY&domain=';
-        
-        // 性能数据记录
-        const performanceData = {};
-        
-        // 初始化性能图表
-        function initChart(canvasId, domain) {
-            return new Chart(document.getElementById(canvasId), {
-                type: 'line',
-                data: {
-                    labels: ['', '', '', '', ''],
-                    datasets: [{
-                        label: '响应时间(ms)',
-                        data: [0, 0, 0, 0, 0],
-                        borderColor: '#00c9a7',
-                        backgroundColor: 'rgba(0, 201, 167, 0.1)',
-                        borderWidth: 2,
-                        pointRadius: 0,
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: {
-                            min: 0,
-                            display: false
-                        },
-                        x: {
-                            display: false
-                        }
-                    },
-                    interaction: { intersect: false },
-                    animation: { duration: 0 }
-                }
-            });
-        }
-
-        // 创建域名卡片
-        function createDomainCard(domain) {
-            const domainGrid = document.getElementById('domainGrid');
-            
-            const card = document.createElement('div');
-            card.className = 'domain-card';
-            card.id = `card-${domain.name.replace('.', '-')}`;
-            card.innerHTML = `
-                <div class="domain-header">
-                    <div class="domain-name">${domain.name}</div>
-                    <div class="status status-checking">
-                        <div class="status-indicator"></div>
-                        <div class="status-text">检测中...</div>
-                    </div>
-                </div>
-                <div class="domain-info">
-                    <div class="info-card">
-                        <div class="info-title">访问状态</div>
-                        <div class="info-value" id="status-${domain.name.replace('.', '-')}">-</div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-title">响应延迟</div>
-                        <div class="info-value" id="latency-${domain.name.replace('.', '-')}">-</div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-title">WHOIS 注册日期</div>
-                        <div class="info-value" id="creation-${domain.name.replace('.', '-')}">-</div>
-                    </div>
-                    <div class="info-card">
-                        <div class="info-title">WHOIS 到期日期</div>
-                        <div class="info-value" id="expiry-${domain.name.replace('.', '-')}">-</div>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="chart-${domain.name.replace('.', '-')}"></canvas>
-                </div>
-                <a href="${domain.url}" target="_blank" class="btn-visit">立即访问</a>
-            `;
-            
-            domainGrid.appendChild(card);
-            
-            // 初始化图表
-            performanceData[domain.name] = {
-                chart: initChart(`chart-${domain.name.replace('.', '-')}`, domain.name),
-                data: []
-            };
-            
-            return card;
-        }
-
-        // 域名状态检测方法
+        // 状态检测函数
         async function checkDomain(domain) {
-            const id = domain.name.replace('.', '-');
             const startTime = performance.now();
-            let latency = 0;
-            let status = 'down';
-            
             try {
-                // 使用更可靠的检测方法
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-                
                 const response = await fetch(domain.url, {
                     method: 'HEAD',
                     mode: 'no-cors',
-                    cache: 'no-store',
-                    signal: controller.signal
+                    cache: 'no-store'
                 });
-                
-                clearTimeout(timeoutId);
-                latency = Math.round(performance.now() - startTime);
-                status = 'up';
+                const latency = Math.round(performance.now() - startTime);
+                return { status: 'success', latency };
             } catch (error) {
-                latency = 0;
-                status = 'down';
-            }
-            
-            return { latency, status };
-        }
-
-        // 获取WHOIS信息（简化版）
-        async function getWhoisInfo(domain) {
-            // 实际实现应使用API，此处为示例数据
-            return {
-                creationDate: '2023-06-01',
-                expiryDate: '2025-06-01'
-            };
-        }
-
-        // 更新域名卡片状态
-        function updateDomainCard(domain, result, whois) {
-            const id = domain.name.replace('.', '-');
-            const card = document.getElementById(`card-${id}`);
-            const statusElement = document.getElementById(`status-${id}`);
-            const latencyElement = document.getElementById(`latency-${id}`);
-            const creationElement = document.getElementById(`creation-${id}`);
-            const expiryElement = document.getElementById(`expiry-${id}`);
-            
-            // 更新状态
-            card.querySelector('.status').className = `status status-${result.status}`;
-            card.querySelector('.status-text').textContent = 
-                result.status === 'up' ? '在线' : '离线';
-                
-            statusElement.textContent = result.status === 'up' ? '正常运行' : '服务中断';
-            statusElement.style.color = result.status === 'up' ? '#00ff9d' : '#ff3d71';
-            
-            // 更新延迟
-            if (result.latency > 0) {
-                latencyElement.textContent = `${result.latency} ms`;
-                latencyElement.style.color = result.latency < 300 ? '#00ff9d' : 
-                                            result.latency < 800 ? '#ffcc00' : '#ff3d71';
-                
-                // 更新图表数据
-                const chartData = performanceData[domain.name];
-                if (chartData.data.length >= 5) chartData.data.shift();
-                chartData.data.push(result.latency);
-                
-                chartData.chart.data.datasets[0].data = chartData.data;
-                chartData.chart.update();
-            }
-            
-            // 更新WHOIS信息
-            if (whois) {
-                creationElement.textContent = whois.creationDate || '未知';
-                expiryElement.textContent = whois.expiryDate || '未知';
+                try {
+                    // 备用检测方案
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 3000);
+                    await fetch(domain.url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    const latency = Math.round(performance.now() - startTime);
+                    return { status: 'success', latency };
+                } catch {
+                    return { status: 'error', latency: -1 };
+                }
             }
         }
 
-        // 执行域名检测
-        async function runDomainChecks() {
-            for (const domain of domains) {
-                createDomainCard(domain);
-                
-                // 同时执行检测和WHOIS查询
-                const [checkResult, whoisInfo] = await Promise.all([
-                    checkDomain(domain),
-                    getWhoisInfo(domain.name)
-                ]);
-                
-                updateDomainCard(domain, checkResult, whoisInfo);
-                
-                // 添加延迟避免请求阻塞
-                await new Promise(resolve => setTimeout(resolve, 300));
+        // 渲染域名状态
+        function renderDomainStatus(domain, status, latency) {
+            const domainList = document.getElementById('domainList');
+            const item = document.createElement('div');
+            item.className = 'domain-item';
+            
+            let statusClass = 'status-warning';
+            let statusText = '检测中...';
+            let latencyText = '--';
+            
+            if (status === 'success') {
+                statusClass = 'status-success';
+                statusText = '访问正常';
+                latencyText = `${latency}ms`;
+            } else if (status === 'error') {
+                statusClass = 'status-error';
+                statusText = '无法访问';
+                latencyText = '超时';
             }
             
-            // 隐藏加载界面
-            document.getElementById('loadingScreen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loadingScreen').style.display = 'none';
-            }, 500);
+            item.innerHTML = `
+                <div class="domain-name">${domain.name}</div>
+                <div class="domain-status ${statusClass}">
+                    <span class="pulse"></span>${statusText}
+                </div>
+                <div class="domain-latency">${latencyText}</div>
+                <div class="domain-action">
+                    <a href="${domain.url}" target="_blank">立即访问</a>
+                </div>
+            `;
+            
+            domainList.appendChild(item);
         }
 
-        // 页面加载完成后开始检测
-        window.addEventListener('DOMContentLoaded', runDomainChecks);
+        // 初始化检测
+        document.addEventListener('DOMContentLoaded', () => {
+            domains.forEach(domain => {
+                // 先显示检测中状态
+                renderDomainStatus(domain, 'checking');
+                
+                // 执行检测
+                checkDomain(domain).then(result => {
+                    const items = document.querySelectorAll('.domain-item');
+                    const currentItem = items[domains.indexOf(domain)];
+                    
+                    // 更新状态
+                    const statusEl = currentItem.querySelector('.domain-status');
+                    const latencyEl = currentItem.querySelector('.domain-latency');
+                    
+                    if (result.status === 'success') {
+                        statusEl.innerHTML = '<span class="pulse"></span>访问正常';
+                        statusEl.className = 'domain-status status-success';
+                        latencyEl.textContent = `${result.latency}ms`;
+                    } else {
+                        statusEl.innerHTML = '<span class="pulse"></span>无法访问';
+                        statusEl.className = 'domain-status status-error';
+                        latencyEl.textContent = '超时';
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
